@@ -7,17 +7,25 @@ registers a new user
 ### data shape:
 
 {
-  username: string,   // UNIQUE     
+
+  username: string,   // UNIQUE   
+  
   password: string,
+  
   phoneNumber: string
+  
 }
 
 ### returns:
 
 {
+
   userId,
+  
   username,
+  
   phoneNumber
+  
 }
 ______________________________________
 * POST /api/auth/login
