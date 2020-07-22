@@ -1,17 +1,7 @@
-const requst = require('supertest')
 const server = require('./server')
-// db
 const supertest = require('supertest')
 
 const CONTENT_TYPE = "application/json; charset=utf-8"
-
-// beforeEach(async () => {
-//     await db.seed.run()
-// })
-
-// afterAll(async () => {
-//     await db.destroy()
-// })
 
 describe('/', () => {
     describe('GET /', () => {
