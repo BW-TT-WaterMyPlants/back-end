@@ -1,16 +1,19 @@
 # back-end
 ______________________________________
-* POST /api/auth/register
+## POST /api/auth/register
+
 registers a new user
 
-data shape:
+### data shape:
+
 {
   username: string,   // UNIQUE     
   password: string,
   phoneNumber: string
 }
 
-returns the information for the new user:
+### returns:
+
 {
   userId,
   username,
