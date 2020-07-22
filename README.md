@@ -9,12 +9,12 @@ _none_
 
 **Returns:**  
 _an array of users' ids and usernames_  
-  [
-    {
-      id,
-      username
-    },
-    ...
+  [  
+    {  
+      id,  
+      username  
+    },  
+    ...  
   ]
 
 ## GET /api/users/:id
@@ -26,9 +26,9 @@ _none_
 
 **Returns:**  
 _an object containing a user's information_  
-  {
-    id,
-    username
+  {  
+    id,  
+    username  
   }
 
 ## POST /api/users
