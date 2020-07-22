@@ -1,27 +1,34 @@
 # back-end
 ______________________________________
-## Users
-### GET /api/users
-**Parameters:**
-* None
+## GET /api/users
+**Parameters:**  
+_none_
 
-**Expects:**
-* None
+**Expects:**  
+_none_
 
-**Returns:**
-an array containing users
-* id
-* username
+**Returns:**  
+_an array of users' ids and usernames_  
+  [
+    {
+      id,
+      username
+    },
+    ...
+  ]
 
-### GET /api/users/:id
-**Parameters**
-* id: *integer* - a valid, 1-based user ID
+## GET /api/users/:id
+**Parameters**  
+_id_: (integer) - a valid, 1-based user ID
 
-**Expects:**
-* None
+**Expects:**  
+_none_
 
-**Returns:**
-an object containing a user's
-* id
-* username
-* phoneNumber
+**Returns:**  
+_an object containing a user's information_  
+  {
+    id,
+    username
+  }
+
+## POST /api/users
