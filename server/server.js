@@ -3,15 +3,27 @@ const helmet = require('helmet')
 const reqLogger = require('./middleware/req-logger')
 const errLogger = require('./middleware/err-logger')
 
+const Users = require('../users').router
+const Plants = require('../plants').router
+
 const server = express()
 
 server.use(helmet())
 server.use(express.json())
-server.use(reqLogger())
+
+// Logger
+if (process.env.NODE_ENV != 'testing') {
+    server.use(reqLogger())
+}
 
 // Routers
+server.use('/api/users', Users)
+// server.use('/api/plants', Plants)
 
-server.use(errLogger())
+// Error Logger
+if (process.env.NODE_ENV != 'testing') {
+    server.use(errLogger())
+}
 
 // Test Endpoint
 

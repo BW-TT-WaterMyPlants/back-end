@@ -1,4 +1,4 @@
-const server = require('./server')
+const server = require('./server').server
 const PORT = process.env.PORT || 5666;
 
 server.listen(PORT, () => {
