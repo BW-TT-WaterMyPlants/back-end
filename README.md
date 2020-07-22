@@ -1,53 +1,9 @@
 # back-end
 ______________________________________
-## POST /api/auth/register
+## GET /api/users
+**Expects:**
+* None
 
-registers a new user
+**Returns:**
+* an array of all registered users' id's and usernames [{id, username}, ...]
 
-### data shape:
-
-{
-
-  username: string,   // UNIQUE   
-  
-  password: string,
-  
-  phoneNumber: string
-  
-}
-
-### returns:
-
-{
-
-  userId,
-  
-  username,
-  
-  phoneNumber
-  
-}
-______________________________________
-## POST /api/auth/login
-
-logs in a user and returns a json web token
-
-### data shape:
-
-{
-
-  username,
-  
-  password
-  
-}
-
-### returns:
-
-{
-
-  message,
-  
-  token
-  
-}
