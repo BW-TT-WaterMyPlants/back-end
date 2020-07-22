@@ -28,17 +28,26 @@ registers a new user
   
 }
 ______________________________________
-* POST /api/auth/login
+## POST /api/auth/login
+
 logs in a user and returns a json web token
 
-data shape:
+### data shape:
+
 {
+
   username,
+  
   password
+  
 }
 
-returns:
+### returns:
+
 {
+
   message,
+  
   token
+  
 }
