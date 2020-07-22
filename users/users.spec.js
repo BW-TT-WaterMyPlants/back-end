@@ -28,15 +28,10 @@ describe('GET /api/users', () => {
 })
 
 describe('GET /api/users/:id', () => {
-    it('returns 200 if the user exists', async () => {
+    it('returns the user if the user exists', async () => {
         const res = await req(server).get('/api/users/1')
         expect(res.statusCode).toBe(200)
-    })
-    it('returns the user ({id, username, phoneNumber}) if the user exists', async () => {
-        const res = await req(server).get('/api/users/1')
-        expect(res.body.id).toBe(1)
-        expect(res.body.username).toBe('janedoe')
-        expect(res.body.phoneNumber).toBe('(900)555-1212')
+        expect(res.headers['content-type']).toBe(CONTENT_TYPE)
     })
     it('returns 404 and the correct message if user not found', async () => {
         const res = await req(server).get('/api/users/5')
@@ -54,6 +49,9 @@ describe('POST /api/users', () => {
         })
         expect(res.statusCode).toBe(201)
         expect(res.headers["content-type"]).toBe(CONTENT_TYPE)
+        expect(res.body.username).toBe('junedoe')
+        expect(res.body.password).toBe('abc12345')
+        expect(res.body.phoneNumber).toBe('(666)666-6666')
     })
     it('rejects a registration using an existing username', async () => {
         const res = await req(server).post('/api/users').send({
@@ -74,6 +72,16 @@ describe('POST /api/users', () => {
     //     expect(res.headers["content-type"]).toBe(CONTENT_TYPE)
     //     expect(res.body.message).toBe('password invalid')
     // })
+    it('rejects a registration with an in-use phone number', async () => {
+        const res = await req(server).post('/api/users').send({
+            username: 'junedoe',
+            password: 'abc12345',
+            phoneNumber: '(900)555-1212'
+        })
+        expect(res.statusCode).toBe(409)
+        expect(res.headers["content-type"]).toBe(CONTENT_TYPE)
+        expect(res.body.message).toBe('phone number in use')
+    })
 })
 
 describe('POST /api/users/login', () => {
@@ -83,7 +91,7 @@ describe('POST /api/users/login', () => {
             password: 'abc12345'
         })
         expect(res.statusCode).toBe(200)
-        expect(res.headers['content-type']).toBe('application/json; charset=utf-8')
+        expect(res.headers['content-type']).toBe(CONTENT_TYPE)
         expect(res.body.message).toBe('janedoe logged in')
         expect(res.body.token).toBeDefined()
     })
@@ -93,7 +101,7 @@ describe('POST /api/users/login', () => {
             password: 'wrong'
         })
         expect(res.statusCode).toBe(401)
-        expect(res.headers['content-type']).toBe('application/json; charset=utf-8')
+        expect(res.headers['content-type']).toBe(CONTENT_TYPE)
         expect(res.body.message).toBe('invalid login')
     })
     it('rejects a nonexistant username', async () => {
@@ -102,7 +110,45 @@ describe('POST /api/users/login', () => {
             password: 'abc12345'
         })
         expect(res.statusCode).toBe(401)
-        expect(res.headers['content-type']).toBe('application/json; charset=utf-8')
+        expect(res.headers['content-type']).toBe(CONTENT_TYPE)
         expect(res.body.message).toBe('invalid login')
+    })
+})
+
+describe('PUT /api/users/:id', () => {
+    const token = await req(server).post('/api/users/login')
+    it('updates password and returns the updated user', async () => {
+        const res = await req(server).put('/api/users/1').send({
+            password: 'abc66666'
+        })
+        expect(res.statusCode).toBe(200)
+        expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+        expect(res.body.user).toBeDefined()
+    })
+    it('updates phone number and returns the updated user', async () => {
+        const res = await req(server).put('/api/users/1').send({
+            phoneNumber: '(666)666-6666'
+        })
+        expect(res.statusCode).toBe(200)
+        expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+    })
+    it('updates password and phone number and returns the updated user', async () => {
+        const res = await req(server).put('/api/users/1').send({
+            password: 'abc66666',
+            phoneNumber: '(666)666-6666'
+        })
+        expect(res.statusCode).toBe(200)
+        expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+    })
+    it('rejects an in-use phone number', async () => {
+        const res = await req(server).put('/api/users/1').send({
+            phoneNumber: '(202)555-1212'
+        })
+        expect(res.statusCode).toBe(409)
+        expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+        expect(res.body.message).toBe('phone number in-use')
+    })
+    it('rejects an unauthenticated or bogus request', async () => {
+        
     })
 })

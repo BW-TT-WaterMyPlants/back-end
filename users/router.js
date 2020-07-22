@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const authenticate = require('../server/middleware/authenticate')
-const validateUsername = require('./middleware/validate-username')
 
 router.get('/', async (req, res, next) => {
     try {
@@ -51,6 +50,14 @@ router.post('/', async (req, res, next) => {
         }
 
         // TODO: Password Validation
+
+        const phoneTaken = await model.findBy({phoneNumber}).first()
+
+        if (phoneTaken) {
+            return res.status(409).json({
+                message: 'phone number in use'
+            })
+        }
 
         const newUser = await model.add({
             username,
