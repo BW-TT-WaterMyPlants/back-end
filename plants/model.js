@@ -6,7 +6,7 @@ async function add(plant) {
 }
 
 function find() {
-    return db('plants').select('*').
+    return db('plants').select('*')
 }
 
 function findBy(filter) {
