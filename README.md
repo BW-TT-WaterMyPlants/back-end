@@ -1,6 +1,7 @@
 # back-end
 ______________________________________
-## GET /api/users
+## Users
+### GET /api/users
 **Parameters:**
 * None
 
@@ -12,7 +13,7 @@ an array containing users
 * id
 * username
 
-## GET /api/users/:id
+### GET /api/users/:id
 **Parameters**
 * id: *integer* - a valid, 1-based user ID
 
