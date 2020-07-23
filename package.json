@@ -6,7 +6,7 @@
   "scripts": {
     "test": "cross-env NODE_ENV=testing JWT_SECRET=testsecret jest",
     "server": "cross-env NODE_ENV=development nodemon -r dotenv/config index.js",
-    "start": "cross-env NODE_ENV=production node -r dotenv/config index.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
