@@ -22,9 +22,22 @@ function findById(id) {
         .first()
 }
 
+function remove(id) {
+    return db('plants')
+      .where({ id })
+      .del()
+}
+
+async function update(id, data) {
+	await db('plants').where({ id }).update(data)
+	return findById(id)
+}
+
 module.exports = {
     add,
     find,
     findBy,
-    findById
+    findById,
+    remove,
+    update,
 }
