@@ -20,6 +20,28 @@ router.get('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
     }
 })
 
+router.post('/', authenticate(), async (req, res, next) => {
+  try {
+    let {token, nickname, species, h2oFrequency, h2oTime, image_url} = req.body
+
+    if (!nickname) { nickname = "Unnamed Plant" }
+    if (!species) { species = "" }
+    if (!h2oFrequency) { h2oFrequency = 1 }
+    if (!h2oTime) { h2oTime = '12:00' }
+    if (!image_url) {
+        image_url = "https://bitsofco.de/content/images/2018/12/broken-1.png"
+    }
+
+    const user_id = req.token.userId
+
+    const plant = await model.add({nickname, species, h2oFrequency, h2oTime, image_url, user_id})
+
+    return res.status(200).json(plant)
+  } catch (err) {
+    next(err)
+  }
+})
+
 router.put('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
   try {
     const plant = await model.findById(req.params.id)
@@ -30,12 +52,19 @@ router.put('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
         })
     }
 
-    let {token, nickname, species, h2oFrequency, h2oTime} = req.body
+    let {token, nickname, species, h2oFrequency, h2oTime, image_url} = req.body
 
     if (!nickname) { nickname = plant.nickname }
     if (!species) { species = plant.species }
     if (!h2oFrequency) { h2oFrequency = plant.h2oFrequency }
     if (!h2oTime) { h2oTime = plant.h2oTime }
+    if (!image_url) {
+      if (plant.image_url) {
+        image_url = plant.image_url
+      } else {
+        image_url = "https://bitsofco.de/content/images/2018/12/broken-1.png"
+      }
+    }
 
     const updatedPlant = await model.update(req.params.id, {nickname, species, h2oFrequency, h2oTime})
 

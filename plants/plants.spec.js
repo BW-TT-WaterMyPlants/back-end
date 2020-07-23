@@ -43,6 +43,23 @@ describe('GET /api/plants/:id', () => {
     })
 })
 
+describe('POST /api/plants', () => {
+  it('adds a new plant object', async () => {
+    const res = await req(server).post('/api/plants').send({
+      token: token,
+      nickname: 'Test Plant',
+      species: 'Testus Plantus',
+      h2oFrequency: 2,
+      h2oTime: '15:30',
+    })
+    expect(res.statusCode).toBe(200)
+    expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+    expect(res.body.id).toBeDefined()
+    expect(res.body.nickname).toBe("Test Plant")
+    expect(res.body.species).toBe("Testus Plantus")
+  })
+})
+
 describe('PUT /api/plants/:id', ()=> {
   it('updates plant with new data', async () => {
     const res = await req(server)
