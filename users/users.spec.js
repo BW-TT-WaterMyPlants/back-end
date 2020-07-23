@@ -21,8 +21,8 @@ describe('GET /api/users', () => {
         const res = await req(server).get('/api/users')
         expect(res.headers['content-type']).toBe(CONTENT_TYPE)
         if (res.body.length > 0) {
-            expect(res.body[0].id).toBeDefined()
-            expect(res.body[0].username).toBeDefined()
+            expect(res.body.users[0].id).toBeDefined()
+            expect(res.body.users[0].username).toBeDefined()
         }
     })
 })
@@ -49,9 +49,10 @@ describe('POST /api/users', () => {
         })
         expect(res.statusCode).toBe(201)
         expect(res.headers["content-type"]).toBe(CONTENT_TYPE)
-        expect(res.body.username).toBe('junedoe')
-        expect(res.body.password).toBe('abc12345')
-        expect(res.body.phoneNumber).toBe('(666)666-6666')
+        expect(res.body.newUser).toBeDefined()
+        // expect(res.body.newUser.username).toBe('junedoe')
+        // expect(res.body.newUser.password).toBe('abc12345')
+        // expect(res.body.newUser.phoneNumber).toBe('(666)666-6666')
     })
     it('rejects a registration using an existing username', async () => {
         const res = await req(server).post('/api/users').send({
@@ -116,39 +117,73 @@ describe('POST /api/users/login', () => {
 })
 
 describe('PUT /api/users/:id', () => {
-    const token = await req(server).post('/api/users/login')
     it('updates password and returns the updated user', async () => {
+        const login = await req(server).post('/api/users/login').send({
+            username: 'janedoe',
+            password: 'abc12345'
+        })
         const res = await req(server).put('/api/users/1').send({
-            password: 'abc66666'
+            token: login.body.token,
+            password: 'abc12345',
+            newPassword: 'abc66666'
         })
         expect(res.statusCode).toBe(200)
         expect(res.headers['content-type']).toBe(CONTENT_TYPE)
         expect(res.body.user).toBeDefined()
     })
     it('updates phone number and returns the updated user', async () => {
+        const login = await req(server).post('/api/users/login').send({
+            username: 'janedoe',
+            password: 'abc12345'
+        })
         const res = await req(server).put('/api/users/1').send({
+            token: login.body.token,
             phoneNumber: '(666)666-6666'
         })
         expect(res.statusCode).toBe(200)
         expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+        expect(res.body.user).toBeDefined()
     })
     it('updates password and phone number and returns the updated user', async () => {
+        const login = await req(server).post('/api/users/login').send({
+            username: 'janedoe',
+            password: 'abc12345'
+        })
         const res = await req(server).put('/api/users/1').send({
-            password: 'abc66666',
+            token: login.body.token,
+            password: 'abc12345',
+            newPassword: 'abc66666',
             phoneNumber: '(666)666-6666'
         })
         expect(res.statusCode).toBe(200)
         expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+        expect(res.body.user).toBeDefined()
     })
     it('rejects an in-use phone number', async () => {
+        const login = await req(server).post('/api/users/login').send({
+            username: 'janedoe',
+            password: 'abc12345'
+        })
         const res = await req(server).put('/api/users/1').send({
+            token: login.body.token,
             phoneNumber: '(202)555-1212'
         })
         expect(res.statusCode).toBe(409)
         expect(res.headers['content-type']).toBe(CONTENT_TYPE)
         expect(res.body.message).toBe('phone number in-use')
     })
-    it('rejects an unauthenticated or bogus request', async () => {
-        
-    })
 })
+
+describe('GET /api/users/:id/plants', () => {
+    it('returns a list of the user\'s plants', async () => {
+        const login = await req(server).post('/api/users/login').send({
+            username: 'janedoe',
+            password: 'abc12345'
+        })
+        const res = await req(server).get('/api/users/:id/plants').send({
+            token: login.body.token
+        })
+        expect(res.statusCode).toBe(200)
+        expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+    })
+}) 
