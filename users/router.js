@@ -129,7 +129,7 @@ router.put('/:id', authenticate(), async (req, res, next) => {
         
         if (req.body.newPassword && req.body.password) {
 
-            const passwordValid = await bcrypt.compare(req.body.password, user.password)
+            const passwordValid = await bcrypt.compare(req.body.password, user[0].password)
             
             if (!passwordValid) {
                 return req.status(401).json({
@@ -155,11 +155,11 @@ router.put('/:id', authenticate(), async (req, res, next) => {
 
         if (req.body.phoneNumber) {
 
-            const phoneTaken = await model.users.findBy({phoneNumber}).first()
+            const phoneTaken = await model.users.findBy({phoneNumber: req.body.phoneNumber}).first()
 
             if (phoneTaken) {
                 return res.status(409).json({
-                    message: 'phone number in use'
+                    message: 'phone number in-use'
                 })
             }
 
