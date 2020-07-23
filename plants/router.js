@@ -2,8 +2,9 @@ const router = require('express').Router()
 const model = require('./model')
 
 const authenticate = require('../server/middleware/authenticate')
+const verifyUserId = require('../server/middleware/verifyUserId')
 
-router.get('/:id', authenticate(), async (req, res, next) => {
+router.get('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
     try {
         const plant = await model.findById(req.params.id)
 
@@ -19,17 +20,7 @@ router.get('/:id', authenticate(), async (req, res, next) => {
     }
 })
 
-router.post('/', authenticate(), async (req, res, next) => {
-    try {
-        const plant = await model.add(req.body)
-
-        return res.status(201).json(newPlant)
-    } catch (err) {
-        next(err)
-    }
-})
-
-router.put('/:id', authenticate(), async (req, res, next) => {
+router.put('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
   try {
     const plant = await model.findById(req.params.id)
 
@@ -54,7 +45,7 @@ router.put('/:id', authenticate(), async (req, res, next) => {
   }
 })
 
-router.delete('/:id', authenticate(), async (req, res, next) => {
+router.delete('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
     try {
         const plant = await model.findById(req.params.id)
 
