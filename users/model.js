@@ -22,9 +22,19 @@ function findById(id) {
         .first()
 }
 
+function update(changes, id) {
+    return db('users')
+        .where({id})
+        .update({
+            password: changes.password,
+            phoneNumber: changes.phoneNumber
+        }, ['id', 'username', 'phonenumber'])
+}
+
 module.exports = {
     add,
     find,
     findBy,
-    findById
+    findById,
+    update
 }
