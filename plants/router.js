@@ -30,7 +30,6 @@ router.put('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
         })
     }
 
-<<<<<<< HEAD
     let {token, nickname, species, h2oFrequency, h2oTime} = req.body
 
     if (!nickname) { nickname = plant.nickname }
@@ -43,12 +42,6 @@ router.put('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
     return res.status(200).json(updatedPlant)
   } catch (err) {
     next(err)
-=======
-    const updatedPlant = await model.update(req.params.id, req.body)
-    return res.status(200).json(updatedPlant)
-  } catch (err) {
-      next(err)
->>>>>>> eric-dev
   }
 })
 
@@ -62,17 +55,10 @@ router.delete('/:id', authenticate(), verifyUserId(), async (req, res, next) => 
             })
         }
 
-<<<<<<< HEAD
         const success = await model.remove(req.params.id)
         if (success===1) {
           return res.status(200).json({message: 'Plant removed'})
         }
-=======
-        const message = await model.remove(req.params.id)
-
-        return res.status(200).json(message)
-
->>>>>>> eric-dev
     } catch (err) {
         next(err)
     }
