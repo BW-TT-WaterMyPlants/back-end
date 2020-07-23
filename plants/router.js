@@ -2,24 +2,9 @@ const router = require('express').Router()
 const model = require('./model')
 
 const authenticate = require('../server/middleware/authenticate')
+const verifyUserId = require('../server/middleware/verifyUserId')
 
-router.get('/', authenticate, async (req, res, next) => {
-    try {
-        const plants = await model.find()
-
-        if (!plants) {
-            return res.status(404).json({
-                message: 'No plants found for this user'
-            })
-        }
-
-        return res.status(200).json(plants)
-    } catch (err) {
-        next(err)
-    }
-})
-
-router.get('/:id', authenticate, async (req, res, next) => {
+router.get('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
     try {
         const plant = await model.findById(req.params.id)
 
@@ -35,17 +20,7 @@ router.get('/:id', authenticate, async (req, res, next) => {
     }
 })
 
-router.post('/', authenticate, async (req, res, next) => {
-    try {
-        const plant = await model.add(req.body)
-
-        return res.status(201).json(newPlant)
-    } catch (err) {
-        next(err)
-    }
-})
-
-router.put('/:id', authenticate, async (req, res, next) => {
+router.put('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
   try {
     const plant = await model.findById(req.params.id)
 
@@ -55,14 +30,22 @@ router.put('/:id', authenticate, async (req, res, next) => {
         })
     }
 
-    const updatedPlant = await model.update(req.params.id, req.body)
-    
-  } catch (err) {
+    let {token, nickname, species, h2oFrequency, h2oTime} = req.body
 
+    if (!nickname) { nickname = plant.nickname }
+    if (!species) { species = plant.species }
+    if (!h2oFrequency) { h2oFrequency = plant.h2oFrequency }
+    if (!h2oTime) { h2oTime = plant.h2oTime }
+
+    const updatedPlant = await model.update(req.params.id, {nickname, species, h2oFrequency, h2oTime})
+
+    return res.status(200).json(updatedPlant)
+  } catch (err) {
+    next(err)
   }
 })
 
-router.delete('/:id', authenticate, async (req, res, next) => {
+router.delete('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
     try {
         const plant = await model.findById(req.params.id)
 
@@ -72,10 +55,10 @@ router.delete('/:id', authenticate, async (req, res, next) => {
             })
         }
 
-        const message = await model.remove(req.params.id)
-
-        return res.status(200).json(message)
-        })
+        const success = await model.remove(req.params.id)
+        if (success===1) {
+          return res.status(200).json({message: 'Plant removed'})
+        }
     } catch (err) {
         next(err)
     }

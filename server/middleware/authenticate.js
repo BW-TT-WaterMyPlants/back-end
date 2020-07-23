@@ -15,6 +15,7 @@ module.exports = () => (req, res, next) => {
             if (err) {
                 return res.status(401).json(authError)
             }
+            req.token = decoded
             next()
         })
     } catch (err) {
