@@ -1,53 +1,41 @@
 # back-end
 ______________________________________
-## POST /api/auth/register
+## Users
 
-registers a new user
+### GET /api/users
+**Parameters:**  
+_none_
 
-### data shape:
+**Expects:**  
+_none_
 
-{
+**Returns:**  
+_an array of users' ids and usernames_  
+[{id, username}, ...]
 
-  username: string,   // UNIQUE   
-  
-  password: string,
-  
-  phoneNumber: string
-  
-}
 
-### returns:
+### GET /api/users/:id
+**Parameters**  
+_id:_ (integer) - a valid, 1-based user ID
 
-{
+**Expects:**  
+_none_
 
-  userId,
-  
-  username,
-  
-  phoneNumber
-  
-}
-______________________________________
-## POST /api/auth/login
+**Returns:**  
+_an object containing a user's information_  
+{id, username}
 
-logs in a user and returns a json web token
 
-### data shape:
+### POST /api/users
+**Parameters**  
+_none_
 
-{
+**Expects**  
+_an object containing a new user's username and password_
+* _username:_ string, must be unique
+* _password:_ string
+* _phoneNumber:_ string, format '(999)999-9999', must be unique
 
-  username,
-  
-  password
-  
-}
-
-### returns:
-
-{
-
-  message,
-  
-  token
-  
-}
+**Returns**  
+_an object containing the new users's id, username, and phoneNumber_  
+{id, username, phoneNumber}
