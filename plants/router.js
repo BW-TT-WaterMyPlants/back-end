@@ -39,8 +39,16 @@ router.put('/:id', authenticate(), async (req, res, next) => {
         })
     }
 
-    const updatedPlant = await model.update(req.params.id, req.body)
+    let {token, nickname, species, h2oFrequency, h2oTime} = req.body
 
+    if (!nickname) { nickname = plant.nickname }
+    if (!species) { species = plant.species }
+    if (!h2oFrequency) { h2oFrequency = plant.h2oFrequency }
+    if (!h2oTime) { h2oTime = plant.h2oTime }
+
+    const updatedPlant = await model.update(req.params.id, {nickname, species, h2oFrequency, h2oTime})
+
+    return res.status(200).json(updatedPlant)
   } catch (err) {
     next(err)
   }
@@ -56,9 +64,10 @@ router.delete('/:id', authenticate(), async (req, res, next) => {
             })
         }
 
-        const message = await model.remove(req.params.id)
-
-        return res.status(200).json(message)
+        const success = await model.remove(req.params.id)
+        if (success===1) {
+          return res.status(200).json({message: 'Plant removed'})
+        }
     } catch (err) {
         next(err)
     }

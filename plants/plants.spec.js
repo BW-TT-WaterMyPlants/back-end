@@ -42,3 +42,28 @@ describe('GET /api/plants/:id', () => {
         expect(res.body.message).toBe('Plant not found')
     })
 })
+
+describe('PUT /api/plants/:id', ()=> {
+  it('updates plant with new data', async () => {
+    const res = await req(server)
+      .put('/api/plants/2')
+      .send({token: token, species: "Prickley Pear Cactus", h2oFrequency: 10})
+    expect(res.statusCode).toBe(200)
+    expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+    expect(res.body.nickname).toBe("Prickley")
+    expect(res.body.species).toBe("Prickley Pear Cactus")
+    expect(res.body.h2oFrequency).toBe(10)
+  })
+})
+
+describe('DELETE /api/plant/:id', ()=> {
+  it('removes plant', async () => {
+    const res = await req(server).delete('/api/plants/3').send({token: token})
+    expect(res.statusCode).toBe(200)
+    expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+    expect(res.body.message).toBe('Plant removed')
+    const check = await req(server).get('/api/plants/3').send({token: token})
+    expect(check.statusCode).toBe(404)
+    expect(check.body.message).toBe('Plant not found')
+  })
+})
