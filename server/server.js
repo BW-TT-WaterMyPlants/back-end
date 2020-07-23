@@ -18,7 +18,7 @@ if (process.env.NODE_ENV != 'testing') {
 
 // Routers
 server.use('/api/users', Users)
-// server.use('/api/plants', Plants)
+server.use('/api/plants', Plants)
 
 // Error Logger
 if (process.env.NODE_ENV != 'testing') {

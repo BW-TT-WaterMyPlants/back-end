@@ -56,9 +56,9 @@ router.put('/:id', authenticate, async (req, res, next) => {
     }
 
     const updatedPlant = await model.update(req.params.id, req.body)
-    
+    return res.status(200).json(updatedPlant)
   } catch (err) {
-
+      next(err)
   }
 })
 
@@ -75,7 +75,7 @@ router.delete('/:id', authenticate, async (req, res, next) => {
         const message = await model.remove(req.params.id)
 
         return res.status(200).json(message)
-        
+
     } catch (err) {
         next(err)
     }
