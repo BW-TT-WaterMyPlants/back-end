@@ -3,23 +3,7 @@ const model = require('./model')
 
 const authenticate = require('../server/middleware/authenticate')
 
-router.get('/', authenticate, async (req, res, next) => {
-    try {
-        const plants = await model.find()
-
-        if (!plants) {
-            return res.status(404).json({
-                message: 'No plants found for this user'
-            })
-        }
-
-        return res.status(200).json(plants)
-    } catch (err) {
-        next(err)
-    }
-})
-
-router.get('/:id', authenticate, async (req, res, next) => {
+router.get('/:id', authenticate(), async (req, res, next) => {
     try {
         const plant = await model.findById(req.params.id)
 
@@ -35,7 +19,7 @@ router.get('/:id', authenticate, async (req, res, next) => {
     }
 })
 
-router.post('/', authenticate, async (req, res, next) => {
+router.post('/', authenticate(), async (req, res, next) => {
     try {
         const plant = await model.add(req.body)
 
@@ -45,7 +29,7 @@ router.post('/', authenticate, async (req, res, next) => {
     }
 })
 
-router.put('/:id', authenticate, async (req, res, next) => {
+router.put('/:id', authenticate(), async (req, res, next) => {
   try {
     const plant = await model.findById(req.params.id)
 
@@ -56,13 +40,13 @@ router.put('/:id', authenticate, async (req, res, next) => {
     }
 
     const updatedPlant = await model.update(req.params.id, req.body)
-    
-  } catch (err) {
 
+  } catch (err) {
+    next(err)
   }
 })
 
-router.delete('/:id', authenticate, async (req, res, next) => {
+router.delete('/:id', authenticate(), async (req, res, next) => {
     try {
         const plant = await model.findById(req.params.id)
 
@@ -75,7 +59,6 @@ router.delete('/:id', authenticate, async (req, res, next) => {
         const message = await model.remove(req.params.id)
 
         return res.status(200).json(message)
-        })
     } catch (err) {
         next(err)
     }
