@@ -75,7 +75,7 @@ router.delete('/:id', authenticate, async (req, res, next) => {
         const message = await model.remove(req.params.id)
 
         return res.status(200).json(message)
-        })
+        
     } catch (err) {
         next(err)
     }
