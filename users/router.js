@@ -3,6 +3,8 @@ const model = {
     users: require('./model'),
     plants: require('../plants').model
 }
+const db = require('../database/config')
+
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
@@ -53,7 +55,7 @@ router.post('/', async (req, res, next) => {
             })
         }
 
-        // TODO: Password Validation
+        //  Password Validation
 
         const phoneTaken = await model.users.findBy({phoneNumber}).first()
 
@@ -63,13 +65,15 @@ router.post('/', async (req, res, next) => {
             })
         }
 
-        const newUser = await model.users.add({
+        const userToAdd = {
             username,
             password: await bcrypt.hash(password, 14),
             phoneNumber
-        })
+        }
 
-        return res.status(201).json({newUser})
+        const newUser = await model.users.add(userToAdd)
+
+        return res.status(201).json(newUser)
     } catch (err) {
         next(err)
     }
@@ -126,11 +130,11 @@ router.put('/:id', authenticate(), async (req, res, next) => {
         }
 
         const changes = {}
-        
+
         if (req.body.newPassword && req.body.password) {
 
             const passwordValid = await bcrypt.compare(req.body.password, user[0].password)
-            
+
             if (!passwordValid) {
                 return req.status(401).json({
                     message: 'invalid password'
@@ -140,13 +144,13 @@ router.put('/:id', authenticate(), async (req, res, next) => {
             changes.password = await bcrypt.hash(req.body.newPassword, 14)
 
         } else if (!req.body.newPassword && req.body.password) {
-            
+
             return req.status(400).json({
                 message: 'missing newPassword'
             })
 
         } else if (req.body.newPassword && !req.body.password) {
-            
+
             return req.status(400).json({
                 message: 'missing password'
             })

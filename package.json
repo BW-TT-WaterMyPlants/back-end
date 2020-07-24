@@ -6,7 +6,11 @@
   "scripts": {
     "test": "cross-env NODE_ENV=testing JWT_SECRET=testsecret jest",
     "server": "cross-env NODE_ENV=development nodemon -r dotenv/config index.js",
-    "start": "cross-env NODE_ENV=development node index.js"
+    "start": "cross-env NODE_ENV=development node index.js",
+    "testserver": "cross-env NODE_ENV=testing nodemon -r dotenv/config index.js",
+    "test-migrate-rollback": "cross-env NODE_ENV=testing knex migrate:rollback",
+    "test-migrate-latest": "cross-env NODE_ENV=testing knex migrate:latest",
+    "test-seed": "cross-env NODE_ENV=testing knex seed:run"
   },
   "repository": {
     "type": "git",

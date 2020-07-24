@@ -4,12 +4,12 @@ const db = require('../database/config')
 
 const CONTENT_TYPE = "application/json; charset=utf-8"
 
-beforeAll(async () => {
-     await db.seed.run()
+beforeAll(() => {
+     return db.seed.run()
 })
 
-afterAll(async () => {
-    await db.destroy()
+afterAll(() => {
+    return db.destroy()
 })
 
 let token;

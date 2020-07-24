@@ -1,4 +1,4 @@
-exports.seed = function(knex, Promise) {
+exports.seed = function(knex) {
   return knex('plants').insert([
     { nickname: "Spidey", species: "Spider Plant", h2oFrequency: 2, h2oTime: "13:00", user_id: 1 }, // 1
     { nickname: "Prickley", species: "Cactus", h2oFrequency: 7, h2oTime: "12:00", user_id: 1 }, // 2

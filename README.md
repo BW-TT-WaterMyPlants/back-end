@@ -90,3 +90,13 @@ _except for token, if these are not provided, they will remain unchanged_
 **Returns**
 _the updated plant object_  
 {id (integer), nickname (string), species (string), h2oFrequency (integer, number of days between waterings), h2oTime (string, time: HH:MM), image_url (string, url)}
+
+### DELETE /api/plants/:id
+**Parameters**  
+_id:_ (integer) - a valid plant ID
+
+**Expects**
+_token_
+
+**Returns**
+_a message: "Plant removed"_  
