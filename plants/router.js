@@ -4,6 +4,22 @@ const model = require('./model')
 const authenticate = require('../server/middleware/authenticate')
 const verifyUserId = require('../server/middleware/verifyUserId')
 
+router.get('/', async (req, res, next) => {
+    try {
+        const plants = await model.find()
+
+        if (!plants) {
+            return res.status(404).json({
+                message: 'No plants found'
+            })
+        }
+
+        return res.status(200).json(plants)
+    } catch (err) {
+        next(err)
+    }
+})
+
 router.get('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
     try {
         const plant = await model.findById(req.params.id)

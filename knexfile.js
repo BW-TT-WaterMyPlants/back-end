@@ -15,10 +15,13 @@ module.exports = {
   	},
   },
   testing: {
-    client: "sqlite3",
+    client: "pg",
   	useNullAsDefault: true,
   	connection: {
-  		filename: "./database/test.db3",
+		host: '127.0.0.1',
+		user: 'wmp',
+		password: 'test',
+		database: 'wmp_test'  
   	},
   	migrations: {
   		directory: "./database/migrations",
@@ -26,10 +29,10 @@ module.exports = {
   	seeds: {
   		directory: "./database/seeds",
   	},
-  	pool: {
-  		afterCreate: (conn, done) => {
-  			conn.run("PRAGMA foreign_keys = ON", done)
-  		},
-  	},
+  	// pool: {
+  	// 	afterCreate: (conn, done) => {
+  	// 		conn.run("PRAGMA foreign_keys = ON", done)
+  	// 	},
+  	// },
   }
 };

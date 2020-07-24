@@ -4,7 +4,7 @@ const db = require('../database/config')
 
 const CONTENT_TYPE = "application/json; charset=utf-8"
 
-beforeEach(async () => {
+beforeAll(async () => {
      await db.seed.run()
 })
 
@@ -180,10 +180,10 @@ describe('GET /api/users/:id/plants', () => {
             username: 'janedoe',
             password: 'abc12345'
         })
-        const res = await req(server).get('/api/users/:id/plants').send({
+        const res = await req(server).get('/api/users/1/plants').send({
             token: login.body.token
         })
         expect(res.statusCode).toBe(200)
         expect(res.headers['content-type']).toBe(CONTENT_TYPE)
     })
-}) 
+})
