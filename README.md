@@ -19,7 +19,7 @@ _an array of users' ids and usernames_
 _id:_ (integer) - a valid, 1-based user ID
 
 **Expects:**  
-_none_
+_token_
 
 **Returns:**  
 _an object containing a user's information_  
@@ -51,6 +51,14 @@ _token_
 _an array of the user's plant objects_  
 [{id (integer), nickname (string), species (string), h2oFrequency (integer, number of days between waterings), h2oTime (string, time: HH:MM), image_url (string, url)}, ...]
 
+### PUT /api/users/:id
+**Parameters**  
+_id:_ (integer) - a valid user ID
+
+**Expects**
+* _phoneNumber:_ (string format '(999)999-9999') _optional_ - user's new phone number. Must be unique.
+* _newPassword:_ (string) _optional_ - user's new password.
+* _password:_ (string) _optional/required_ - user's current password. required if new password is being set. do not set if new password is not being set.
 
 ## Plants
 
