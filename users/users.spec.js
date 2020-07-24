@@ -4,7 +4,7 @@ const db = require('../database/config')
 
 const CONTENT_TYPE = "application/json; charset=utf-8"
 
-beforeAll(async () => {
+beforeEach(async () => {
      await db.seed.run()
 })
 
