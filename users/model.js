@@ -28,7 +28,7 @@ function update(changes, id) {
         .update({
             password: changes.password,
             phoneNumber: changes.phoneNumber
-        }, ['id', 'username', 'phonenumber'])
+        }, ['id', 'username', 'phoneNumber'])
 }
 
 module.exports = {
