@@ -28,11 +28,22 @@ module.exports = {
   	},
   	seeds: {
   		directory: "./database/seeds",
+  	}
+  },
+  production: {
+    client: "pg",
+  	useNullAsDefault: true,
+  	connection: {
+		host: `${process.env.DB_HOST}`,
+		user: `${process.env.DB_USER}`,
+		password: `${process.env.DB_PASSWORD}`,
+		database: `${process.env.DB_NAME}`  
   	},
-  	// pool: {
-  	// 	afterCreate: (conn, done) => {
-  	// 		conn.run("PRAGMA foreign_keys = ON", done)
-  	// 	},
-  	// },
+  	migrations: {
+  		directory: "./database/migrations",
+  	},
+  	seeds: {
+  		directory: "./database/seeds",
+  	}
   }
 };
