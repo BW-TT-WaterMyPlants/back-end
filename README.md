@@ -60,6 +60,10 @@ _id:_ (integer) - a valid user ID
 * _newPassword:_ (string) _optional_ - user's new password.
 * _password:_ (string) _optional/required_ - user's current password. required if new password is being set. do not set if new password is not being set.
 
+**Returns**  
+The updated user record.  
+{id, username, phoneNumber}
+
 ## Plants
 
 ### GET /api/plants/:id
