@@ -1,5 +1,6 @@
 const express = require('express')
 const helmet = require('helmet')
+const cors = require('cors')
 const reqLogger = require('./middleware/req-logger')
 const errLogger = require('./middleware/err-logger')
 
@@ -9,6 +10,7 @@ const Plants = require('../plants').router
 const server = express()
 
 server.use(helmet())
+server.use(cors())
 server.use(express.json())
 
 // Logger
