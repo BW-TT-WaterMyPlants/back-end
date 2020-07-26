@@ -9,6 +9,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const authenticate = require('../server/middleware/authenticate')
+const verifyUserId = require('../server/middleware/verifyUserId')
 const nodemon = require('nodemon')
 
 router.get('/', async (req, res, next) => {
@@ -27,7 +28,7 @@ router.get('/', async (req, res, next) => {
     }
 })
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', authenitcate(), verifyUserId(), async (req, res, next) => {
     try {
         const user = await model.users.findById(req.params.id)
 
@@ -120,7 +121,7 @@ router.post('/login', async (req, res, next) => {
     }
 })
 
-router.put('/:id', authenticate(), async (req, res, next) => {
+router.put('/:id', authenticate(), verifyUserId(),  async (req, res, next) => {
     try {
         const user = await model.users.findBy({id: req.params.id})
 
@@ -184,7 +185,7 @@ router.put('/:id', authenticate(), async (req, res, next) => {
     }
 })
 
-router.get('/:id/plants', authenticate(), async (req, res, next) => {
+router.get('/:id/plants', authenticate(), verifyUserId(), async (req, res, next) => {
     try {
         const plants = await model.plants.findBy({user_id: req.params.id})
         if (!plants) {
