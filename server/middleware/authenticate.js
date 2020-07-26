@@ -6,7 +6,7 @@ module.exports = () => (req, res, next) => {
     }
 
     try {
-        const token = req.body.token || req.get('token')
+        const token = req.get('token')
         if (!token) {
             return res.status(401).json(authError)
         }
