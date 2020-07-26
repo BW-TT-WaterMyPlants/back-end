@@ -10,6 +10,7 @@ module.exports = () => async (req, res, next) => {
           })
         }
         
+        console.log('param id:', req.params.id)
         console.log('req.token:', req.token)
 
         if (plant.user_id !== req.token.userId) {
