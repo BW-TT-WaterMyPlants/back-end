@@ -28,7 +28,7 @@ router.get('/', async (req, res, next) => {
     }
 })
 
-router.get('/:id', authenitcate(), verifyUserId(), async (req, res, next) => {
+router.get('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
     try {
         const user = await model.users.findById(req.params.id)
 
