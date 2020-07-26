@@ -20,7 +20,7 @@ router.get('/', async (req, res, next) => {
     }
 })
 
-router.get('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
+router.get('/:id', authenticate(), async (req, res, next) => {
     try {
         const plant = await model.findById(req.params.id)
 
@@ -58,7 +58,7 @@ router.post('/', authenticate(), async (req, res, next) => {
   }
 })
 
-router.put('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
+router.put('/:id', authenticate(), async (req, res, next) => {
   try {
     const plant = await model.findById(req.params.id)
 
@@ -90,7 +90,7 @@ router.put('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
   }
 })
 
-router.delete('/:id', authenticate(), verifyUserId(), async (req, res, next) => {
+router.delete('/:id', authenticate(), async (req, res, next) => {
     try {
         const plant = await model.findById(req.params.id)
 
