@@ -9,6 +9,8 @@ module.exports = () => async (req, res, next) => {
             message: 'Plant not found'
           })
         }
+        
+        console.log('req.token:', req.token)
 
         if (plant.user_id !== req.token.userId) {
           return res.status(401).json({
