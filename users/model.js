@@ -16,7 +16,6 @@ function findBy(filter) {
 }
 
 function findById(id) {
-  console.log(id)
     return db('users')
         .select('id', 'username', 'phoneNumber')
         .where({id})
