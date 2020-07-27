@@ -33,6 +33,7 @@ async function update(id, data) {
 	return findById(id)
 }
 
+
 module.exports = {
     add,
     find,

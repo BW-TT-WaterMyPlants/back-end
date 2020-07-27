@@ -88,7 +88,7 @@ _except for token, these all have defaults if not provided_
 
 **Returns**
 _a plant object_  
-{id (integer), nickname (string), species (string), h2oFrequency (integer, number of days between waterings), h2oTime (string, time: HH:MM), image_url (string, url)}
+{id (integer), nickname (string), species (string), h2oFrequency (integer, number of days between waterings), h2oTime (string, time: HH:MM), image_url (string, url), watered_at (datetime object), next_watering (datetime object)}
 
 ### PUT /api/plants/:id
 **Parameters**  
@@ -101,7 +101,7 @@ _except for token, if these are not provided, they will remain unchanged_
 
 **Returns**
 _the updated plant object_  
-{id (integer), nickname (string), species (string), h2oFrequency (integer, number of days between waterings), h2oTime (string, time: HH:MM), image_url (string, url)}
+{id (integer), nickname (string), species (string), h2oFrequency (integer, number of days between waterings), h2oTime (string, time: HH:MM), image_url (string, url), watered_at (datetime object), next_watering (datetime object)}
 
 ### DELETE /api/plants/:id
 **Parameters**  
@@ -112,3 +112,17 @@ _token_
 
 **Returns**
 _a message: "Plant removed"_  
+
+### PATCH /api/plants/:id/water
+**Parameters**
+_id:_ (integer) - a valid plant ID
+
+**Expects**
+_token_
+
+**Does**
+Updates _watered_at_ to current timestamp. Updates _next_watering_ to current timestamp + _h2oFrequency_ in days
+
+**Returns**
+_the updated plant object_   
+{id (integer), nickname (string), species (string), h2oFrequency (integer, number of days between waterings), h2oTime (string, time: HH:MM), image_url (string, url), watered_at (datetime object), next_watering (datetime object)}

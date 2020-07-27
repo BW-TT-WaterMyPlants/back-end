@@ -38,7 +38,7 @@ router.get('/:id', authenticate(), async (req, res, next) => {
 
 router.post('/', authenticate(), async (req, res, next) => {
   try {
-    let {token, nickname, species, h2oFrequency, h2oTime, image_url} = req.body
+    let {token, nickname, species, h2oFrequency, h2oTime, image_url, watered_at, next_watering} = req.body
 
     if (!nickname) { nickname = "Unnamed Plant" }
     if (!species) { species = "" }
@@ -47,10 +47,21 @@ router.post('/', authenticate(), async (req, res, next) => {
     if (!image_url) {
         image_url = "https://bitsofco.de/content/images/2018/12/broken-1.png"
     }
+    if (!watered_at) {
+      const watered_at = new Date(Date.now())
+    }
+    if (!next_watering) {
+      next_watering = new Date(Date.now())
+      next_watering.setDate(next_watering.getDate() + h2oFrequency);
+      const hours = parseInt(h2oTime.slice(0,2))
+      const minutes = parseInt(h2oTime.slice(3))
+      next_watering.setHours(hours,minutes);
+    }
+
 
     const user_id = req.token.userId
 
-    const plant = await model.add({nickname, species, h2oFrequency, h2oTime, image_url, user_id})
+    const plant = await model.add({nickname, species, h2oFrequency, h2oTime, image_url, user_id, watered_at, next_watering})
 
     return res.status(200).json(plant)
   } catch (err) {
@@ -68,22 +79,10 @@ router.put('/:id', authenticate(), async (req, res, next) => {
         })
     }
 
-    let {token, nickname, species, h2oFrequency, h2oTime, image_url} = req.body
 
-    if (!nickname) { nickname = plant.nickname }
-    if (!species) { species = plant.species }
-    if (!h2oFrequency) { h2oFrequency = plant.h2oFrequency }
-    if (!h2oTime) { h2oTime = plant.h2oTime }
-    if (!image_url) {
-      if (plant.image_url) {
-        image_url = plant.image_url
-      } else {
-        image_url = "https://bitsofco.de/content/images/2018/12/broken-1.png"
-      }
-    }
+    const { token, ...updates } = req.body
 
-    const updatedPlant = await model.update(req.params.id, {nickname, species, h2oFrequency, h2oTime})
-
+    const updatedPlant = await model.update(req.params.id, {...plant, ...updates})
     return res.status(200).json(updatedPlant)
   } catch (err) {
     next(err)
@@ -107,6 +106,35 @@ router.delete('/:id', authenticate(), async (req, res, next) => {
     } catch (err) {
         next(err)
     }
+})
+
+router.patch('/:id/water', authenticate(), async (req, res, next) => {
+  try {
+    const plant = await model.findById(req.params.id)
+
+    if (!plant) {
+        return res.status(401).json({
+            message: 'Plant not found'
+        })
+    }
+
+    const watered_at = new Date(Date.now())
+
+    let next_watering = new Date(Date.now())
+    next_watering.setDate(next_watering.getDate() + plant.h2oFrequency)
+    const hours = parseInt(plant.h2oTime.slice(0,2))
+    const minutes = parseInt(plant.h2oTime.slice(3))
+    next_watering.setHours(hours,minutes);
+
+
+    const updatedPlant = await model.update(req.params.id, {...plant, watered_at, next_watering })
+
+    return res.status(200).json(updatedPlant)
+
+
+  } catch (err) {
+    next(err)
+  }
 })
 
 module.exports = router
