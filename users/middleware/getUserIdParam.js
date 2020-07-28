@@ -1,8 +1,8 @@
 const Users = require('../model')
 
-module.exports = () => async (req, res, next, user_id) => {
+module.exports = () => async (req, res, next, userId) => {
     try {
-        const user = Users.findById(user_id)
+        const user = await Users.findBy({id: userId}).first()
 
         if (!user) {
             return res.status(404).json({

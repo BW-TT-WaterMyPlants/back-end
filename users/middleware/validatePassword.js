@@ -1,13 +1,16 @@
 const model = require("../model")
 const bcrypt = require('bcryptjs')
 
-module.exports = (failStatus = 401, failMessage = 'invalid login') => async (req, res, next) => {
+module.exports = () => async (req, res, next) => {
     try {
-        const {password} = req.body
+        const password = req.password
+        if (!password) {
+            return next()
+        }
         const passwordValid = await bcrypt.compare(password, req.user.password)
         if (!passwordValid) {
-            return res.status(failStatus).json({
-                message: failMessage
+            return res.status(401).json({
+                message: 'invalid login'
             })
         }
         req.passwordValid = passwordValid

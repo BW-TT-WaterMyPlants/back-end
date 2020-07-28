@@ -22,13 +22,15 @@ function findById(id) {
         .first()
 }
 
-function update(changes, id) {
-    return db('users')
+async function update(changes, id) {
+    const updatedId = await db('users')
         .where({id})
+        .returning('id')
         .update({
             password: changes.password,
             phoneNumber: changes.phoneNumber
-        }, ['id', 'username', 'phoneNumber'])
+        })
+    return findById(updatedId)
 }
 
 module.exports = {

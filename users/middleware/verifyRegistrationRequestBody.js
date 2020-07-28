@@ -7,7 +7,7 @@ module.exports = () => (req, res, next) => {
             })
         }
         req.username = username
-        req.password = password
+        req.newPassword = password
         req.phoneNumber = phoneNumber
         next()
     } catch (err) {
