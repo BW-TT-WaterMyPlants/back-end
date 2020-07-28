@@ -7,7 +7,7 @@ module.exports = () => async (req, res, next) => {
             species: species,
             h2oFrequency: h2oFrequency,
             imageUrl: imageUrl,
-            lastWatered: (lastWatered) ? Date(lastWatered) : lastWatered,
+            lastWatered: (lastWatered) ? (new Date(lastWatered)).toISOString() : lastWatered,
             userId: req.user.id
         }
         next()

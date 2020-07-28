@@ -313,7 +313,7 @@ describe('/api/users/:userId/plants', () => {
                 species: 'Carrot',
                 h2oFrequency: 1,
                 imageUrl: "https://bitsofco.de/content/images/2018/12/broken-1.png",
-                lastWatered: Date(2020, 6, 6, 6, 6, 6)
+                lastWatered: new Date(2020, 6, 6, 6, 6, 6)
             })
             expect(res.statusCode).toBe(201)
             expect(res.headers['content-type']).toBe(CONTENT_TYPE)
@@ -324,7 +324,7 @@ describe('/api/users/:userId/plants', () => {
             expect(res.body.plant.species).toBe('Carrot')
             expect(res.body.plant.h2oFrequency).toBe(1)
             expect(res.body.plant.imageUrl).toBe("https://bitsofco.de/content/images/2018/12/broken-1.png")
-            expect(res.body.plant.lastWatered).toBe(Date(2020, 6, 6, 6, 6, 6))
+            expect(res.body.plant.lastWatered).toBe((new Date(2020, 6, 6, 6, 6, 6)).toISOString())
             expect(res.body.plant.userId).toBe(1)
         })
         it("returns 201 and correct new plant if passed a partial plant object", async () => {
