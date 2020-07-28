@@ -282,4 +282,82 @@ describe('/api/users/:userId/plants', () => {
             expect(res.body.plants.length).toBe(3)
         })
     })
+    describe('POST', () => {
+        it('returns 404 if the userId does not exist', async () => {
+            const res = await req(server).post('/api/users/3/plants').set('token', token)
+            expect(res.statusCode).toBe(404)
+            expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+            expect(res.body.message).toBe('user not found')
+        })
+        it('returns 401 and correct message if request is missing token header', async () => {
+            const res = await req(server).post('/api/users/1/plants')
+            expect(res.statusCode).toBe(401)
+            expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+            expect(res.body.message).toBe('missing required token')
+        })
+        it("returns 401 and correct message if token header is invalid", async () => {
+            const res = await req(server).post('/api/users/1/plants').set('token', 'invalid')
+            expect(res.statusCode).toBe(401)
+            expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+            expect(res.body.message).toBe('invalid token')
+        })
+        it("returns 403 and correct message if the token userId doesn't match param userId", async () => {
+            const res = await req(server).post('/api/users/2/plants').set('token', token)
+            expect(res.statusCode).toBe(403)
+            expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+            expect(res.body.message).toBe('unauthorized user')
+        })
+        it("returns 201 and correct new plant if passed a full plant object", async () => {
+            const res = await req(server).post('/api/users/1/plants').set('token', token).send({
+                nickname: 'Bobby',
+                species: 'Carrot',
+                h2oFrequency: 1,
+                imageUrl: "https://bitsofco.de/content/images/2018/12/broken-1.png",
+                lastWatered: new Date(2020, 6, 6, 6, 6, 6)
+            })
+            expect(res.statusCode).toBe(201)
+            expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+            expect(res.body.message).toBe('plant added')
+            expect(res.body.plant).toBeDefined()
+            expect(res.body.plant.id).toBeDefined()
+            expect(res.body.plant.nickname).toBe('Bobby')
+            expect(res.body.plant.species).toBe('Carrot')
+            expect(res.body.plant.h2oFrequency).toBe(1)
+            expect(res.body.plant.imageUrl).toBe("https://bitsofco.de/content/images/2018/12/broken-1.png")
+            expect(res.body.plant.lastWatered).toBe((new Date(2020, 6, 6, 6, 6, 6)).toISOString())
+            expect(res.body.plant.userId).toBe(1)
+        })
+        it("returns 201 and correct new plant if passed a partial plant object", async () => {
+            const res = await req(server).post('/api/users/1/plants').set('token', token).send({
+                nickname: 'Bobby',
+                species: 'Carrot',
+                h2oFrequency: 1,
+            })
+            expect(res.statusCode).toBe(201)
+            expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+            expect(res.body.message).toBe('plant added')
+            expect(res.body.plant).toBeDefined()
+            expect(res.body.plant.id).toBeDefined()
+            expect(res.body.plant.nickname).toBe('Bobby')
+            expect(res.body.plant.species).toBe('Carrot')
+            expect(res.body.plant.h2oFrequency).toBe(1)
+            expect(res.body.plant.imageUrl).toBe(null)
+            expect(res.body.plant.lastWatered).toBe(null)
+            expect(res.body.plant.userId).toBe(1)
+        })
+        it("returns 201 and correct new plant if passed an empty plant object", async () => {
+            const res = await req(server).post('/api/users/1/plants').set('token', token)
+            expect(res.statusCode).toBe(201)
+            expect(res.headers['content-type']).toBe(CONTENT_TYPE)
+            expect(res.body.message).toBe('plant added')
+            expect(res.body.plant).toBeDefined()
+            expect(res.body.plant.id).toBeDefined()
+            expect(res.body.plant.nickname).toBe(null)
+            expect(res.body.plant.species).toBe(null)
+            expect(res.body.plant.h2oFrequency).toBe(null)
+            expect(res.body.plant.imageUrl).toBe(null)
+            expect(res.body.plant.lastWatered).toBe(null)
+            expect(res.body.plant.userId).toBe(1)
+        })
+    })
 })

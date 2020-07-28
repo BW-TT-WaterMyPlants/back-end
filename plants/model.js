@@ -29,7 +29,7 @@ function remove(id) {
 }
 
 async function update(id, data) {
-	await db('plants').where({ id }).update(data)
+	await db('plants').where({ id }).update(data).returning('id')
 	return findById(id)
 }
 
