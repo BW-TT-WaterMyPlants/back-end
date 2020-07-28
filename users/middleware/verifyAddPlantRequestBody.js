@@ -3,11 +3,11 @@ module.exports = () => async (req, res, next) => {
         const { nickname, species, h2oFrequency, imageUrl, lastWatered } = req.body
 
         req.plant = {
-            nickname: nickname,
-            species: species,
-            h2oFrequency: h2oFrequency,
-            imageUrl: imageUrl,
-            lastWatered: (lastWatered) ? (new Date(lastWatered)).toISOString() : lastWatered,
+            nickname,
+            species,
+            h2oFrequency,
+            imageUrl,
+            lastWatered,
             userId: req.user.id
         }
         next()
