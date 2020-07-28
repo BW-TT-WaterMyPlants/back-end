@@ -1,204 +1,130 @@
 const router = require('express').Router()
-const model = {
-    users: require('./model'),
-    plants: require('../plants').model
-}
-const db = require('../database/config')
+const Users = require('./model')
+const Plants = require('../plants').model
 
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const authenticate = require('../server/middleware/authenticate')
-const verifyUserId = require('../server/middleware/verifyUserId')
-const nodemon = require('nodemon')
+const checkPhoneNumberAvailability = require('./middleware/checkPhoneNumberAvailability')
+const checkUsernameAvailability = require('./middleware/checkUsernameAvailability')
+const getUserIdParam = require('./middleware/getUserIdParam')
+const validateAuthToken = require('./middleware/validateAuthToken')
+const validatePassword = require('./middleware/validatePassword')
+const validateUsername = require('./middleware/validateUsername')
+const verifyLoginRequestBody = require('./middleware/verifyLoginRequestBody')
+const verifyRegistrationRequestBody = require('./middleware/verifyRegistrationRequestBody')
+const verifyUpdateRequestBody = require('./middleware/verifyUpdateRequestBody')
 
-router.get('/', async (req, res, next) => {
-    try {
-        const users = await model.users.find()
+const SALT = 14
 
-        if (!users) {
-            return res.status(404).json({
-                message: 'no users found'
-            })
-        }
+router.route('/')
+    .get(async (req, res, next) => {
+        try {
+            const users = await Users.find()
 
-        return res.status(200).json({users})
-    } catch (err) {
-        next(err)
-    }
-})
-
-router.get('/:id', authenticate(), async (req, res, next) => {
-    try {
-        const user = await model.users.findById(req.params.id)
-
-        if (!user) {
-            return res.status(404).json({
-                message: 'user not found'
-            })
-        }
-
-        return res.status(200).json({user})
-    } catch (err) {
-        next(err)
-    }
-})
-
-router.post('/', async (req, res, next) => {
-    try {
-        const { username, password, phoneNumber } = req.body
-
-        const user = await model.users.findBy({username}).first()
-
-        if (user) {
-            return res.status(409).json({
-                message: 'username unavailable'
-            })
-        }
-
-        //  Password Validation
-
-        const phoneTaken = await model.users.findBy({phoneNumber}).first()
-
-        if (phoneTaken) {
-            return res.status(409).json({
-                message: 'phone number in use'
-            })
-        }
-
-        const userToAdd = {
-            username,
-            password: await bcrypt.hash(password, 14),
-            phoneNumber
-        }
-
-        const newUser = await model.users.add(userToAdd)
-
-        return res.status(201).json(newUser)
-    } catch (err) {
-        next(err)
-    }
-})
-
-router.post('/login', async (req, res, next) => {
-    try {
-        const { username, password } = req.body
-        const user = await model.users.findBy({username}).first()
-
-        if (!user) {
-            return res.status(401).json({
-                message: 'invalid login'
-            })
-        }
-
-        const passwordValid = await bcrypt.compare(password, user.password)
-
-        if (!passwordValid) {
-            return res.status(401).json({
-                message: 'invalid login'
-            })
-        }
-
-        const payload = {
-            userId: user.id,
-            username: user.username,
-            phoneNumber: user.phoneNumber
-        }
-
-        const options = {
-            expiresIn: '1d'
-        }
-
-        const token = jwt.sign(payload, process.env.JWT_SECRET, options)
-
-        res.status(200).json({
-            message: `${user.username} logged in`,
-            user,
-            token
-        })
-    } catch (err) {
-        next(err)
-    }
-})
-
-router.put('/:id', authenticate(),  async (req, res, next) => {
-    try {
-        const user = await model.users.findBy({id: req.params.id})
-
-        if (!user) {
-            return req.status(404).json({
-                message: 'invalid user'
-            })
-        }
-
-        const changes = {}
-
-        if (req.body.newPassword && req.body.password) {
-
-            const passwordValid = await bcrypt.compare(req.body.password, user[0].password)
-
-            if (!passwordValid) {
-                return req.status(401).json({
-                    message: 'invalid password'
+            if (!users) {
+                return res.status(404).json({
+                    message: 'no users found'
                 })
             }
 
-            changes.password = await bcrypt.hash(req.body.newPassword, 14)
-
-        } else if (!req.body.newPassword && req.body.password) {
-
-            return req.status(400).json({
-                message: 'missing newPassword'
-            })
-
-        } else if (req.body.newPassword && !req.body.password) {
-
-            return req.status(400).json({
-                message: 'missing password'
-            })
-
+            return res.status(200).json({users})
+        } catch (err) {
+            next(err)
         }
+    })
+    .post(verifyRegistrationRequestBody(), checkUsernameAvailability(),
+          checkPhoneNumberAvailability(), async (req, res, next) => {
+        try {
+            const newUser = await Users.add({
+                username: req.username,
+                password: await bcrypt.hash(req.newPassword, SALT),
+                phoneNumber: req.phoneNumber
+            })
+            return res.status(201).json({
+                message: 'new user created successfully',
+                newUser
+            })
+        } catch (err) {
+            next(err)
+        }
+    })
 
-        if (req.body.phoneNumber) {
-
-            const phoneTaken = await model.users.findBy({phoneNumber: req.body.phoneNumber}).first()
-
-            if (phoneTaken) {
-                return res.status(409).json({
-                    message: 'phone number in-use'
-                })
+router.route('/login')
+    .post(verifyLoginRequestBody(), validateUsername(), validatePassword(), (req, res, next) => {
+        try {
+            const user = req.user
+            const payload = {
+                userId: user.id,
+                username: user.username,
+                phoneNumber: user.phoneNumber
             }
-
-            changes.phoneNumber = req.body.phoneNumber
-
-        }
-
-        const updatedUser = await model.users.update(changes, req.params.id)
-
-        res.status(200).json({
-            user: updatedUser
-        })
-
-
-    } catch (err) {
-        next(err)
-    }
-})
-
-router.get('/:id/plants', authenticate(), async (req, res, next) => {
-    try {
-        const plants = await model.plants.findBy({user_id: req.params.id})
-        if (!plants) {
+            const options = {
+                expiresIn: '1d'
+            }
+            const token = jwt.sign(payload, process.env.JWT_SECRET, options)
             return res.status(200).json({
-                plants: []
+                user,
+                token,
+                message: 'login successful'
             })
+        } catch (err) {
+            next(err)
         }
-        res.status(200).json({
-            plants
-        })
-    } catch (err) {
-        next(err)
-    }
-})
+    })
+
+router.param('userId', getUserIdParam())
+
+router.route('/:userId')
+    .all(validateAuthToken())
+    .get((req, res, next) => {
+        try {
+            return res.status(200).json({
+                message: 'user found',
+                user:req.user
+            })
+        } catch (err) {
+            next(err)
+        }
+    })
+    .put(verifyUpdateRequestBody(), checkPhoneNumberAvailability(), validatePassword(), async (req, res, next) => {
+        try {
+            const [newPassword, phoneNumber] = [req.newPassword, req.phoneNumber]
+            const changes = {}
+            if (newPassword) {
+                changes.password = await bcrypt.hash(newPassword, SALT)
+            }
+            if (phoneNumber) {
+                changes.phoneNumber = phoneNumber
+            }
+            const user = await Users.update(changes, req.user.id)
+            return res.status(200).json({
+                message: 'update successful',
+                user
+            })
+        } catch (err) {
+            next(err)
+        }
+    })
+
+router.route('/:userId/plants')
+    .all(validateAuthToken())
+    .get(async (req, res, next) => {
+        try {
+            const plants = await Plants.findBy({user_id: req.user.id})
+            if (!plants) {
+                return res.status(200).json({
+                    message: 'found 0 plants',
+                    plants: []
+                })
+            }
+            return res.status(200).json({
+                message: `found ${plants.length} plants`,
+                plants
+            })
+        } catch (err) {
+            next(err)
+        }
+    })
 
 module.exports = router

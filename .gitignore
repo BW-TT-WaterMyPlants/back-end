@@ -122,3 +122,6 @@ dist
 
 # .env
 .env
+
+# sqlite3 databases
+*.db3

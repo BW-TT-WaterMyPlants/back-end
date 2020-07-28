@@ -14,7 +14,7 @@ server.use(cors())
 server.use(express.json())
 
 // Logger
-if (process.env.NODE_ENV != 'testing') {
+if (process.env.NODE_ENV != 'testing_sqlite' && process.env.NODE_ENV != 'testing_pg') {
     server.use(reqLogger())
 }
 
@@ -23,7 +23,7 @@ server.use('/api/users', Users)
 server.use('/api/plants', Plants)
 
 // Error Logger
-if (process.env.NODE_ENV != 'testing') {
+if (process.env.NODE_ENV != 'testing_sqlite' && process.env.NODE_ENV != 'testing_pg') {
     server.use(errLogger())
 }
 

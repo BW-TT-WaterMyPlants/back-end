@@ -16,20 +16,21 @@ function findBy(filter) {
 }
 
 function findById(id) {
-  console.log(id)
     return db('users')
         .select('id', 'username', 'phoneNumber')
         .where({id})
         .first()
 }
 
-function update(changes, id) {
-    return db('users')
+async function update(changes, id) {
+    const updatedId = await db('users')
         .where({id})
+        .returning('id')
         .update({
             password: changes.password,
             phoneNumber: changes.phoneNumber
-        }, ['id', 'username', 'phoneNumber'])
+        })
+    return findById(updatedId)
 }
 
 module.exports = {
