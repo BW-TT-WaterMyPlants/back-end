@@ -11,6 +11,7 @@ const getUserIdParam = require('./middleware/getUserIdParam')
 const validateAuthToken = require('./middleware/validateAuthToken')
 const validatePassword = require('./middleware/validatePassword')
 const validateUsername = require('./middleware/validateUsername')
+const verifyAddPlantRequestBody = require('./middleware/verifyAddPlantRequestBody')
 const verifyLoginRequestBody = require('./middleware/verifyLoginRequestBody')
 const verifyRegistrationRequestBody = require('./middleware/verifyRegistrationRequestBody')
 const verifyUpdateRequestBody = require('./middleware/verifyUpdateRequestBody')
@@ -111,7 +112,7 @@ router.route('/:userId/plants')
     .all(validateAuthToken())
     .get(async (req, res, next) => {
         try {
-            const plants = await Plants.findBy({user_id: req.user.id})
+            const plants = await Plants.findBy({userId: req.user.id})
             if (!plants) {
                 return res.status(200).json({
                     message: 'found 0 plants',
@@ -121,6 +122,17 @@ router.route('/:userId/plants')
             return res.status(200).json({
                 message: `found ${plants.length} plants`,
                 plants
+            })
+        } catch (err) {
+            next(err)
+        }
+    })
+    .post(verifyAddPlantRequestBody(), async (req, res, next) => {
+        try {
+            const plant = await Plants.add(req.plant)
+            return res.status(201).json({
+                message: 'plant added',
+                plant
             })
         } catch (err) {
             next(err)
