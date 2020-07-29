@@ -25,10 +25,9 @@ Returns an object containing the user's information and an auth token.
 
 ## /api/users/:userId
 All endpoints require a valid auth token for the user matching userId sent as a header.
-| Header ('token') | |
+| Headers | |
 |--|--|
-| username | *string, required* |
-| password | *string, required* |
+| token | json web token |
 
 ### GET
 Returns the information of the user with the given userId.
@@ -45,10 +44,9 @@ Returns the updated user.
 
 ## /api/users/:userId/plants
 All endpoints require a valid auth token for the user matching userId sent as a header.
-| Header ('token') | |
+| Headers | |
 |--|--|
-| username | *string, required* |
-| password | *string, required* |
+| token | json web token |
 
 ### GET
 Returns an array of the user's plants.
