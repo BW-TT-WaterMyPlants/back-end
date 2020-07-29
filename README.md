@@ -1,68 +1,69 @@
-# back-end
-______________________________________
-## Users
+# Water My Plants API Reference
+## /api/users
+### GET
+Returns an array of all registered users.
 
-### GET /api/users
-**Parameters:**  
-_none_
+### POST
+Requires an object containing the new user's information.
+| Parameters | |
+|--|--|
+| username | *string, required*. must be unique |
+| password | *string, required*. |
+| phoneNumber | *string. if set*, must be unique and conform to '(999)999-9999' format |
 
-**Expects:**  
-_none_
+Returns an object containing information about the new user.
 
-**Returns:**  
-_an array of users' ids and usernames_  
-[{id, username}, ...]
+## /api/users/login
+### POST
+Requires an object containing the username and password of the user wishing to log in.
+| Parameters | |
+|--|--|
+| username | *string, required* |
+| password | *string, required* |
 
+Returns an object containing the user's information and an auth token.
 
-### GET /api/users/:id
-**Parameters**  
-_id:_ (integer) - a valid, 1-based user ID
+## /api/users/:userId
+All endpoints require a valid auth token for the user matching userId sent as a header.
+| Header ('token') | |
+|--|--|
+| username | *string, required* |
+| password | *string, required* |
 
-**Expects:**  
-_token_
+### GET
+Returns the information of the user with the given userId.
 
-**Returns:**  
-_an object containing a user's information_  
-{id, username}
+### PUT
+Requires an object containing the requested changes.
+| Parameters | |
+|--|--|
+| phoneNumber | *string, optional*. if set, must be unique and conform to '(999)999-9999' format |
+| newPassword | *string, optional*. the user's desired new password |
+| password | *string, optional/required (if newPassword is set)*. the user's current password.
 
+Returns the updated user.
 
-### POST /api/users
-**Parameters**  
-_none_
+## /api/users/:userId/plants
+All endpoints require a valid auth token for the user matching userId sent as a header.
+| Header ('token') | |
+|--|--|
+| username | *string, required* |
+| password | *string, required* |
 
-**Expects**  
-_an object containing a new user's username and password_
-* _username:_ string, must be unique
-* _password:_ string
-* _phoneNumber:_ string, format '(999)999-9999', must be unique
+### GET
+Returns an array of the user's plants.
 
-**Returns**  
-_an object containing the new users's id, username, and phoneNumber_  
-{id, username, phoneNumber}
+### POST
+Accepts an optional object containing information about the new plant. Any parameters not set will default to null.
+| Parameters | |
+|--|--|
+| nickname | *string, optional* |
+| species | *string, optional* |
+| h2oFrequency | *integer, optional*. number of days between waterings. |
+| lastWatered | *timestamptz, optional*. last date and time plant was watered. if set must conform to ISO standard format ('YYYY-MM-DDThh:mm:ss:sssZ'), which can be obtained from Date.toISOString()|
+| imageUrl | *string, optional*. the url of the plant's image resource. |
 
-### GET /api/users/:id/plants
-**Parameters**  
-_id:_ (integer) - a valid user ID
-
-**Expects**  
-_token_
-
-**Returns**  
-_an array of the user's plant objects_  
-[{id (integer), nickname (string), species (string), h2oFrequency (integer, number of days between waterings), h2oTime (string, time: HH:MM), image_url (string, url)}, ...]
-
-### PUT /api/users/:id
-**Parameters**  
-_id:_ (integer) - a valid user ID
-
-**Expects**
-* _phoneNumber:_ (string format '(999)999-9999') _optional_ - user's new phone number. Must be unique.
-* _newPassword:_ (string) _optional_ - user's new password.
-* _password:_ (string) _optional/required_ - user's current password. required if new password is being set. do not set if new password is not being set.
-
-**Returns**  
-The updated user record.  
-{id, username, phoneNumber}
+Returns the newly created plant object.
 
 ## Plants
 
