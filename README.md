@@ -65,63 +65,30 @@ Returns the newly created plant object.
 
 ## Plants
 
-### GET /api/plants/:id
-**Parameters**  
-_id:_ (integer) - a valid plant ID
+### /api/plants/:plantId
+All endpoints require a valid auth token for the user matching the userId of the plant.
+| Headers | |
+|--|--|
+| token | json web token |
 
-**Expects**  
-_token_
+### GET
+Returns the plant object
 
-**Returns**  
-_a plant object_  
-{id (integer), nickname (string), species (string), h2oFrequency (integer, number of days between waterings), h2oTime (string, time: HH:MM), image_url (string, url)}
+### PUT
+Accepts an object containing updated information about the specified plant. Any parameters not set will not be changed.
+| Parameters | |
+|--|--|
+| nickname | *string, optional* |
+| species | *string, optional* |
+| h2oFrequency | *integer, optional*. number of days between waterings. |
+| lastWatered | *timestamptz, optional*. last date and time plant was watered. if set must conform to ISO standard format ('YYYY-MM-DDThh:mm:ss:sssZ'), which can be obtained from Date.toISOString()|
+| imageUrl | *string, optional*. the url of the plant's image resource. |
 
-### POST /api/plants
-**Parameters**
-_none_
+Returns the updated plant object.
 
-**Expects**
-_an object containing the user's token and the plant details_
-_except for token, these all have defaults if not provided_
-{token (string), nickname (string), species (string), h2oFrequency (integer, number of days between waterings), h2oTime (string, time: HH:MM), image_url (string, url)}
+### PATCH
+Accepts an optional 'lastWatered' object indicating the last date and time plant was watered. if set must conform to ISO standard format ('YYYY-MM-DDThh:mm:ss:sssZ'), which can be obtained from Date.toISOString()
+If not set, server defaults to `new Date(Date.now()).toISOString()` and sets the timestamp to the current server time and date.
 
-**Returns**
-_a plant object_  
-{id (integer), nickname (string), species (string), h2oFrequency (integer, number of days between waterings), h2oTime (string, time: HH:MM), image_url (string, url), watered_at (datetime object), next_watering (datetime object)}
-
-### PUT /api/plants/:id
-**Parameters**  
-_id:_ (integer) - a valid plant ID
-
-**Expects**
-_an object containing the user's token and the plant details_
-_except for token, if these are not provided, they will remain unchanged_
-{token (string), nickname (string), species (string), h2oFrequency (integer, number of days between waterings), h2oTime (string, time: HH:MM), image_url (string, url)}
-
-**Returns**
-_the updated plant object_  
-{id (integer), nickname (string), species (string), h2oFrequency (integer, number of days between waterings), h2oTime (string, time: HH:MM), image_url (string, url), watered_at (datetime object), next_watering (datetime object)}
-
-### DELETE /api/plants/:id
-**Parameters**  
-_id:_ (integer) - a valid plant ID
-
-**Expects**
-_token_
-
-**Returns**
-_a message: "Plant removed"_  
-
-### PATCH /api/plants/:id/water
-**Parameters**
-_id:_ (integer) - a valid plant ID
-
-**Expects**
-_token_
-
-**Does**
-Updates _watered_at_ to current timestamp. Updates _next_watering_ to current timestamp + _h2oFrequency_ in days
-
-**Returns**
-_the updated plant object_   
-{id (integer), nickname (string), species (string), h2oFrequency (integer, number of days between waterings), h2oTime (string, time: HH:MM), image_url (string, url), watered_at (datetime object), next_watering (datetime object)}
+### DELETE
+Removes the plant resource from the database and returns a message that the plant was removed.
