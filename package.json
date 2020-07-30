@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test-sl3": "cross-env NODE_ENV=testing_sqlite JWT_SECRET=testsecret jest --watch",
-    "test-pg": "cross-env NODE_ENV=testing_pg JWT_SECRET=testsecret jest",
+    "test-pg": "cross-env NODE_ENV=testing_pg JWT_SECRET=testsecret jest --watch",
     "server": "cross-env NODE_ENV=development nodemon -r dotenv/config index.js",
     "start": "node index.js",
     "testserver": "cross-env NODE_ENV=testing nodemon -r dotenv/config index.js",
